@@ -1,8 +1,9 @@
-# Quant II Lab, NYU, Spring 2022
+# Quant II Lab, NYU
+# Spring 2022
 
-**Instructor: Cyrus Samii**
+**Instructor: [Cyrus Samii](https://cyrussamii.com/)**
 
-**TA: [Giacomo Lemoli](http://www.zhoujunlong.com)**
+**TA: [Giacomo Lemoli](https://giacomolemoli.com/)**
 
 *This Repo is publicly available* 
 
