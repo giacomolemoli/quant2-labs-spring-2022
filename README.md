@@ -36,4 +36,4 @@ By appointment: [gl1759@nyu.edu](mailto:gl1759@nyu.edu)
 
 ## Schedule
 
-TBA
+- Lab 1: Introduction, R Markdown, R basics
