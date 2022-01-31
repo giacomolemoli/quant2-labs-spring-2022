@@ -30,7 +30,7 @@ Before the first lab, please make sure you have R and (the free version of) RStu
 
 ## TA office hours
 
-TBA
+By appointment: [gl1759@nyu.edu](mailto:gl1759@nyu.edu)
 
 ---
 
