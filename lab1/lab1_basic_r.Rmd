@@ -1,0 +1,740 @@
+---
+title: "Basic R and Basic Concepts"
+author: "Giacomo Lemoli^[This note builds on and revises material created by Aaron Zhou] [(gl1759@nyu.edu)](gl1759@nyu.edu)"
+date: "January 31, 2022"
+output: pdf_document 
+fontsize: 12pt
+---
+
+# About R
+- R is an object-oriented programming language
+    - Data
+    - Procedures
+- Object's procedures can access and modify the data fields of objects.
+- If you see a + means a parenthesis or bracket is open.
+- R is case sensitive.
+- Use / in path names. Not \\.
+
+
+
+# Using Third-party Code
+- Relevant commands are: `install.packages` and `library`
+- Find the appropriate packages and commands with Google and via searching in R:
+```
+?covariance
+??covariance
+install.packages("sandwich")
+library(sandwich)
+library("sandwich")
+require(sanwich)
+sanwich::vcovHC
+?vcovHC
+```
+
+# Install from other sources
+- If you want to install packages on GitHub:
+```
+require(devtools)
+install_github("wch/ggplot2")
+```
+- If you have a complied package downloaded on your computer (tar.gz):
+- Tools -> Install Packages -> Find the location
+- R cmd install *package name*
+
+# Data types
+- Character - strings
+- Double / Numeric - numbers
+- Logical - true/false
+- Factor - unordered categorical variables
+
+# Character
+
+ 
+
+```{r}
+my.name <- "Giacomo"
+paste("My","name","is","Giacomo")
+name.sentence <- paste0("My","name","is","Giacomo")
+as.character(99)
+class(my.name)
+```
+
+
+
+# Numeric
+
+ 
+
+```{r}
+num <- 99.867
+class(num)
+round(num, digits=2)
+as.numeric("99") + 1
+pi
+exp(1)
+```
+
+# Numeric
+
+- `sin`, `exp`, `log`, `factorial`, `choose`, are some useful mathematical functions 
+- You probably noticed that "<-" is an assignment operator
+- It lets you store objects and use them later on
+- You can also use "=" 
+- To remove something, rm(object)
+- To remove everything that is stored use rm(list=ls())
+
+# Logical
+
+- The logical type allows us to make statements about truth
+
+ 
+
+```{r}
+2 == 4
+class(2==4)
+```
+
+ 
+
+```{r}
+my.name != num
+```
+
+ 
+
+```{r}
+"34" == 34
+```
+\footnotesize
+- `==`, `!=`, `>`, `<`, `>=`, `<=`, `!`, `&`, `|`, `any`, `all`, etc
+
+
+# Data Structures
+
+- There are other ways to hold data, though:
+
+    - Vectors/Lists
+    - Matrices/Dataframes
+    - Array
+
+
+# Vectors
+
+- Almost everything in R is a vector.
+
+ 
+
+```{r}
+as.vector(4)
+4
+```
+
+ 
+
+- We can combine elements in vectors with `c`, for concatenate:
+
+ 
+
+```{r}
+vec <- c("a","b","c")
+vec
+```
+
+ 
+
+```{r}
+c(2,3,vec)
+```
+
+
+# More Vectors
+- We can index vectors in several ways
+
+ 
+
+```{r}
+vec[1]
+```
+
+ 
+
+```{r}
+names(vec) <- c("first","second","third")
+vec
+```
+
+ 
+
+```{r}
+vec["first"]
+```
+
+# Creating Vectors
+
+```{r}
+vector1 <- 1:5
+vector1
+
+vector1 <- c(1:5,7,11)
+vector1
+
+vector2 <- seq(1, 7, 1)
+vector2
+```
+# Creating Vectors
+
+```{r}
+cbind(vector1,vector2)
+rbind(vector1,vector2)
+
+```
+
+# Missingness
+
+ 
+
+```{r}
+vec[1] <- NA
+vec
+```
+
+ 
+
+```{r}
+is.na(vec)
+```
+
+ 
+```{r}
+vec[!is.na(vec)] # vec[complete.cases(vec)]
+```
+
+# Lists
+
+- Lists are similar to vectors, but they allow for arbitrary mixing of types and lengths.
+
+ 
+
+```{r}
+listie <- list(first = vec, second = num)
+listie
+```
+
+# Lists
+
+```{r}
+listie[[1]]
+listie$first
+```
+
+# Basic Functions
+
+```{r}
+a <- c(1,2,3,4,5)
+a
+sum(a)
+max(a)
+min(a)
+```
+
+# Basic Functions
+```{r}
+length(a)
+length <- length(a)
+b <- seq(from=0,to=5,by=.5)
+c <- rep(10,27)
+d <- runif(100)
+```
+> More later
+# Matrices
+
+- $$A = \begin{pmatrix}1 & 3\\ 2 & 4\end{pmatrix}$$
+- $A_{ij}$
+- $A_{1,2} = 3$
+- $A_{1,\cdot} = (1,3)$
+
+ 
+
+```{r}
+A <- matrix(c(1,2,3,4),nrow=2,ncol=2)
+A
+A[1,2]
+A[1,]
+A[1:2,]
+```
+
+# Matrix Operations
+
+- Its very easy to manipulate matrices:
+
+ 
+
+```{r}
+solve(A) #A^{-1}
+```
+
+  
+
+```{r}
+10*A
+```
+
+# Matrix Operations
+
+```{r}
+B<-diag(c(1,2)) #Extract or replace diagonal of a matrix
+B
+```
+
+ 
+
+```{r}
+A%*%B
+```
+
+# More Matrix Ops.
+
+ 
+
+```{r}
+t(A) # A'
+```
+
+ 
+
+```{r}
+rbind(A,B)
+```
+
+# More Matrix Ops.
+
+
+```{r}
+cbind(A,B)
+```
+
+ 
+
+```{r}
+c(1,2,3)%x%c(1,1) # Kronecker Product
+```
+
+- How to generate the OLS estimates with $X$ and $Y$?
+
+# Naming Things
+
+ 
+
+```{r}
+rownames(A)
+```
+
+ 
+
+```{r}
+rownames(A)<-c("a","b")
+colnames(A)<-c("c","d")
+A
+```
+
+ 
+
+```{r}
+A[,"d"]
+```
+
+# Array
+
+- An array is similar to a matrix in many ways
+
+ 
+
+```{r}
+array1 <- array(c(1,2,3,4,5,6,7,8), c(2,2,2))
+array1
+array1[,2,]
+```
+
+ 
+
+# Dataframes
+
+- The workhorse
+
+- Basically just a matrix that allows mixing of types.
+
+- R has a bunch of datasets 
+ 
+```{r, fig.height=1, fig.width=2}
+# data() gives you all the datasets
+data(iris)
+head(iris)
+```
+
+# Dataframes
+
+- But you will generally work with your own datasets
+```{r}
+getwd()
+setwd("C:/Users/giaco/Dropbox/NYU/TA Work/Quant 2 Spring 2022/Lab material/lab1")
+```
+
+
+-  R can read any number of file types (.csv, .txt, etc.)
+```{r}
+#.CSV
+dat.csv <- read.csv("http://stat511.cwick.co.nz/homeworks/acs_or.csv")
+```
+# Dataframes
+```{r}
+#STATA
+require(foreign)
+dat.data <- read.dta("https://stats.idre.ucla.edu/stat/data/test.dta")
+```
+
+
+# Dataframes
+```{r}
+# add variables
+dat.data[, "intercept"] <- rep(1, nrow(dat.data))
+# change the name of a variable
+names(dat.data)[6] <- "constant"
+# delete variables
+dat.data <- dat.data[, -6]
+# sort on one variable
+dat.data <- dat.data[order(dat.data[, "mpg"]), ]
+
+
+# remove all missing values
+dat.data.complete <- dat.data[complete.cases(dat.data), ]
+# Or similarly
+dat.dat.nona <- na.omit(dat.data)
+
+dim(dat.data.complete)
+dim(dat.dat.nona)
+
+# select a subset
+dat.data.subset <- dat.data[dat.data[, "make"] == "AMC", ]
+dat.data.subset <- dat.data[1:3, ]
+```
+
+
+# Objects
+
+- Many functions will return objects rather than a single datatype.
+
+ 
+
+```{r}
+# Remember to always set a seed when generating random numbers
+set.seed(1)
+
+X <- 1:100 
+Y <- rnorm(100,X)
+out.lm <- lm(Y~X)
+class(out.lm)
+predict(out.lm)
+plot(out.lm)
+summary(out.lm)
+```
+
+- Objects can have other data embedded inside them
+
+ 
+
+```{r}
+out.lm$coefficients
+```
+
+ 
+
+Show results properly using stargazer.
+```{r}
+library(stargazer)
+stargazer(out.lm) #  This code gives you a latex code
+
+stargazer(out.lm, type = "text") # This gives you a table in text
+```
+
+
+You can always includes latex code directly.
+
+\begin{table}[!htbp] \centering 
+  \caption{} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & Y \\ 
+\hline \\[-1.8ex] 
+ X & 1.000$^{***}$ \\ 
+  & (0.003) \\ 
+  & \\ 
+ Constant & 0.132 \\ 
+  & (0.182) \\ 
+  & \\ 
+\hline \\[-1.8ex] 
+Observations & 100 \\ 
+R$^{2}$ & 0.999 \\ 
+Adjusted R$^{2}$ & 0.999 \\ 
+Residual Std. Error & 0.903 (df = 98) \\ 
+F Statistic & 102,169.400$^{***}$ (df = 1; 98) \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+
+# Control Flow
+
+- loops
+- if/else
+
+# Loops
+
+- for loops - a way to say "do this for each element of the index"
+- "this" is defined in what follows the "for" expression
+
+ 
+
+```{r}
+for(i in 1:5) {
+  cat(i*10," ")
+}
+```
+
+ 
+
+```{r}
+for(i in 1:length(vec)) { 
+  cat(vec[i]," ")
+}
+```
+
+ 
+
+```{r}
+for(i in vec) { 
+  cat(i," ")
+}
+```
+
+# If/Else
+
+ 
+
+```{r}
+if(vec[2]=="b") print("Hello World!")
+```
+
+ 
+
+```{r}
+if(vec[3]=="a") {
+  print("Hello World!")
+} else {
+  print("!dlroW olleH")
+}
+```
+```{r}
+
+for(i in 2:length(vec)){
+  if(vec[i]=="b") {
+  print("Hello World!")
+  }
+  else {
+  print("!dlroW olleH")
+  }
+}
+```
+
+
+# Functions
+- Function perform a set of operations internally and return only the output we want
+- They are especially useful when we want to reiterate the same actions without copying the same lines of code forever
+
+```{r}
+# Simple function to estimate descriptive statistics
+descr <- function(var){
+  mean <- mean(var, na.rm=T)
+  sd <- sd(var, na.rm=T)
+  N <- length(var)
+  return(round(c(mean, sd, N), 2))
+}
+
+# Apply it to our data
+apply(dat.data[,c("mpg", "weight", "price")], 2, descr)
+
+```
+Since data frames are R objects, we can code our own estimators (one of the reasons people like R).
+```{r}
+# Function to compute OLS coefficients
+ols <- function(X, y) {
+  # Input: vector or matrix X, vector y
+  # Returns: coefficient vector for OLS regression (X'X)^{-1}X'y
+  
+  # Create a column for the intercept
+  if ( !all(as.matrix(X)[,1] == 1) ) {X <- cbind(1, X)}
+  out <- solve(t(X) %*% X) %*% t(X) %*% y
+  rownames(out) <- c('Intercept', rep('', nrow(out)-1 ))
+  return( t(out) )
+}
+
+# Let's estimate regression coefficients by OLS
+round(ols(X, Y), 4)
+
+lm(Y ~ X)
+```
+
+
+\clearpage{}
+
+# Simulations
+- A very important tool 
+- Theoretical properties of estimators can be better understood by observing them in simulated data
+- For empirical researchers, simulating the DGP allows to study properties of research designs such as power (especially important when designing an experiment or study)
+- So, if you don't understand something, simulation is a valid option
+
+# An example
+Recall the Neyman estimator of the sampling variance of the difference in means:
+
+$$
+\hat{V} = \frac{\hat{s}^2_{Y_1}}{n_1} + \frac{\hat{s}^2_{Y_0}}{n_0}
+$$
+
+We have seen that, under random sampling from a super-population, this estimator is unbiased for the sampling variance of the difference in means given by both random sample variation **and** randomization within sample (Imbens and Rubin, Ch.6). 
+
+
+$$
+E[\hat{V}] = \frac{\sigma^2_{Y_1}}{n_1} + \frac{\sigma^2_{Y_0}}{n_0} = V[\bar{Y_1} - \bar{Y_0}] 
+$$
+
+Moreover, if there is treatment effect heterogeneity (i.e. the unit-level treatment effects are not constant), it is a (upward) biased estimator of the sampling variance of difference in means given by randomization only, for a fixed sample (Imbens and Rubin Ch.6).
+
+$$
+E_D[\hat{V}|S] = V_D[\bar{Y_1} - \bar{Y_0}|S] + \frac{s^2_\rho}{n} \geq V_D[\bar{Y_1} - \bar{Y_0}|S]
+$$
+
+Let's observe these properties through simulation. 
+
+```{r} 
+# Set seed
+set.seed(123)
+
+# Assume a large super population
+N_pop <- 100000
+
+# We simulate the potential outcomes for each observation 
+Y0 <- abs(rnorm(N_pop, mean = 5, sd = 2))
+Y1 <- Y0 + rnorm(N_pop, 0, 5) + 4 
+
+# Note that the PATE is ~ 4 by construction
+TE <- Y1 - Y0
+(PATE <- mean(TE))
+
+
+# Now, we extract a random sample from this super-population
+# Say, our experimental sample
+Nsample <- 1000
+pop <- data.frame(Y0 = Y0, Y1 = Y1, TE = TE)
+sample <- pop[sample(nrow(pop), size = Nsample),]
+
+
+# What is the SATE?
+(SATE <- mean(sample$TE))
+
+
+# Now, we can simulate the randomization distribution over this sample.
+# In practice, we re-assign the treatment N times and at each iteration we compute an estimate 
+# for the SATE using the new **observed** values
+
+# Number of iterations
+Nboot <- 10000
+
+# An empty vector where to store the estimates
+dim <- vars <- rep(NA, Nboot)
+
+# Start loop
+for(i in 1:Nboot){
+  # Treatment assignment to half units (complete randomization)
+  sample$D <- 0
+  sample$D[sample(Nsample, Nsample/2)] <- 1
+  
+  # Observed potential outcomes
+  sample$Y <- sample$D*sample$Y1 + (1-sample$D)*sample$Y0
+  
+  # Compute simple difference in means (estimate for SATE) and store it
+  dim[i] <- mean(sample$Y[sample$D==1]) - mean(sample$Y[sample$D==0])
+  
+  # Compute variance (estimate for V(SATE)) and store it
+  vars[i] <- var(sample$Y[sample$D==1])/(Nsample/2) + var(sample$Y[sample$D==0])/(Nsample/2)
+}
+
+
+# We now have a simulated randomization distribution of differences in means
+# We know this is unbiased for the SATE
+mean(dim)
+
+
+# What is the variance of this estimator in the randomization distribution?
+var(dim)
+
+# What is the expected value of the variance estimator we computed?
+mean(vars)
+
+
+
+
+
+# Finally, let's compute the sampling variance of DIM under both randomization and sampling distribution
+# Here the simulation has two levels: 
+# (i) we do an outer loop where we randomly draw samples from the super population
+# (ii) we do an inner loop where for each sample we compute the randomization distribution, as before
+
+# Number of sample draws to do
+Nsampling <- 20
+
+# Matrices and vectors where to store the results
+dim <- vars <- matrix(NA, Nsampling, Nboot)
+
+# Begin loop
+for(j in 1:Nsampling){
+  # New random sample
+  sample <- pop[sample(nrow(pop), size = Nsample),] 
+    
+  # Inner loop: randomization distribution
+    for(i in 1:Nboot){
+      # Treatment assignment to half units (complete randomization)
+      sample$D <- 0
+      sample$D[sample(Nsample, Nsample/2)] <- 1
+      
+      # Observed potential outcomes
+      sample$Y <- sample$D*sample$Y1 + (1-sample$D)*sample$Y0
+      
+      # Compute simple difference in means (estimate for SATE) and store it
+      dim[j,i] <- mean(sample$Y[sample$D==1]) - mean(sample$Y[sample$D==0])
+      
+      # Compute variance (estimate for V(SATE)) and store it
+  vars[j,i] <- var(sample$Y[sample$D==1])/(Nsample/2) + var(sample$Y[sample$D==0])/(Nsample/2)
+    }
+}
+
+# We know that the DIM is unbiased also for the PATE
+mean(dim)
+
+# What is the variance of this estimator in the sampling and randomization distribution?
+var(as.vector(dim))
+
+# Note that we can also compute the "true" (theoretical) value
+# using the population values
+var(Y1)/(Nsample/2) + var(Y0)/(Nsample/2)
+
+# What is the expected value of the Neyman variance estimator?
+mean(vars)
+```
+
+
+Note that under sampling and randomization distribution the variance of the DIM estimator is larger! In fact, we have two sources of uncertainty (or noise) to account for. But we are able to estimate it without bias using sample quantities.
