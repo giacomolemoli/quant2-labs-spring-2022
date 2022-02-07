@@ -37,3 +37,4 @@ By appointment: [gl1759@nyu.edu](mailto:gl1759@nyu.edu)
 ## Schedule
 
 - Lab 1: Introduction, R Markdown, R basics
+- Lab 2: DAGs, Regression properties, Effective samples
