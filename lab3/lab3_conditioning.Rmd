@@ -33,7 +33,7 @@ knitr::opts_chunk$set(echo = TRUE, eval=TRUE, warning=FALSE, message=FALSE)
 
 # CIA and causal effects
 Recall the CIA assumption.
-$$D_i \bot (Y_{1i}, Y_{0i}) | X_i, 0<P(D_i=1)<1$$
+$$D_i \bot (Y_{1i}, Y_{0i}) | X_i, 0<P(D_i=1|X_i)<1$$
 
 This assumption guarantees that group/covariate stratum-specific ATEs are identified in the data:
 $$
@@ -169,7 +169,7 @@ In any case, relying on the PS shifts modeling issues from estimating $E[Y_i|X_i
 - Non-parametric methods for causal effects under "selection on observables"
 - Approximates an experiment with block-randomization
 - Let's focus on the ATT as an estimand, because it requires weaker assumptions than CIA to be identified \pause
-- CMI: $E[Y_{0i}|D_i=1, X_i] = E[Y_{0i}|D_i=0, X_i], P(D_i=1)<1$
+- CMI: $E[Y_{0i}|D_i=1, X_i] = E[Y_{0i}|D_i=0, X_i], P(D_i=1|X_i)<1$
   - Weaker overlap conditions as we just need to care about counterfactuals for treated units and not for control units
   
 # Matching
@@ -279,6 +279,8 @@ In R:
 - `MatchIt`, `Matching`, `GenMatch`
 - `CBPS`
 - `PSweight`
+- `Causalweight`
+- `cem`
 
 In Stata:
 
