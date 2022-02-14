@@ -1,0 +1,335 @@
+---
+title: "Quant II"
+subtitle: "Lab 3: Conditioning on observables"
+author: "Giacomo Lemoli"
+date: "February 14, 2022"
+output: 
+  beamer_presentation:
+    theme: "Madrid"
+    color: "crane"
+urlcolor: blue    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, warning=FALSE, message=FALSE)
+```
+
+
+# Today's plan
+- Matching and weighting
+- Sensitivity analysis
+
+
+# Conditioning on observables: Recap
+- We started with the goal standard: a randomized experiment. There the treatment assignment is independent of any pre-existing characteristic by construction
+- Then we have moved to observational settings, where we need assumptions to identify causal effects
+- The assumption we have been working with is that the treatment assignment is independent of the potential outcomes once we account for/condition on a set of observable characteristics
+- Intuition: if the same characteristics give us an equal probability of being treated, then differences in treatment status between us are just the outcome of a random draw
+  - Think of drawing the treatment status from a common Bernoulli distribution with a unique probability parameter $q$ 
+- In empirical applications, this is also informally called an assumption of "selection on observables". It is usually a strong assumption
+
+
+
+
+# CIA and causal effects
+Recall the CIA assumption.
+$$D_i \bot (Y_{1i}, Y_{0i}) | X_i, 0<P(D_i=1)<1$$
+
+This assumption guarantees that group/covariate stratum-specific ATEs are identified in the data:
+$$
+\begin{aligned}
+\tau(x) = E[Y_{1i} - Y_{0i}|X_i=x] = E[Y_{1i}|D_i=1, X_i=x] - E[Y_{0i}|D_i=0, X_i=x]
+\end{aligned}
+$$
+
+And then ${\color{red} \tau_{PATE}}$ is identified by averaging over the covariates distribution (cf. Imbens and Wooldridge 2009, p.26-27)
+$$
+{\color{red} \tau_{PATE}} = E[\tau(x)] = \int_X\tau(x){\color{red}dF(x)}
+$$
+Same holds for ${\color{blue}\tau_{PATT}}$, changing the distribution to be the one of the population we care about: ${\color{blue} F(x|D_i=1)}$
+
+
+# Conditioning on observables in empirical research
+When can CIA be plausibly invoked?
+
+Geographic factors influence treatment assignment. E.g. much of the comparative development literature. \pause
+
+![](plough_abs.PNG){height=60%}
+
+
+# Conditioning on observables in empirical research
+Treatment assignment function is observed (but cannot be deterministic. Why?). E.g. media effects literature. \pause
+
+![](mediaset_plot.PNG){height=75%}
+
+# Conditionining on observables in empirical research
+- CIA is a strong assumption and needs to be justified on substantive grounds
+- Usually authors are required to reduce the number of units in the conditioning set (e.g. by adding fixed effects for smaller groups or creating artificial groups)
+- This may be demanding of the data in terms of uncertainty, so there may be trade-offs in the assumptions that are required
+- It is common practice to check for CIA plausibility by assessing covariate balance 
+
+
+
+# Regression and CIA
+- Linear regression is the most obvious tool to estimate causal effects under CIA 
+- Estimates linear approximations of the conditional means of the potential outcomes
+- Problematic approximation if the treated and control units are very different in terms of their covariates
+- We are using the linear relationship estimated in populated covariate cells to extrapolate outcomes in unpopulated covariate cells
+
+# Regression and CIA
+Suppose we have 
+$$
+\begin{aligned}
+E[Y_{0i}|X_i] = \alpha_0 + \beta_0(X_i - \bar{X})\\
+E[Y_{1i}|X_i] = \alpha_1 + \beta_1(X_i - \bar{X}) \\
+\end{aligned}
+$$
+We can implement the estimation of $\tau_{PATE}$ by running an OLS regression on $D_i$, $(X_i - \bar{X})$ and $D_i*(X_i - \bar{X})$. 
+Then the coefficient of $D_i$ is an estimate of the PATE: 
+$$\hat{\tau}_{reg} = \hat{\alpha}_1 - \hat{\alpha}_0$$
+
+# Extrapolation
+To see where problems with covariates distribution kick in, let's use the decomposition used by Imbens and Rubin (Ch. 12) and Imbens and Woldridge (2009): \pause
+
+$$
+\begin{aligned}
+& \hat{\tau}_{reg} = \underbrace{\bar{Y}_1 - \bar{Y}_0}_\text{Difference in means} - \underbrace{(\frac{N_0}{N_1 + N_0}\hat{\beta_1} + \frac{N_1}{N_1 + N_0}\hat{\beta_0})(\bar{X}_1 - \bar{X}_0)}_\text{Regression adjustment}
+\end{aligned}
+$$
+\pause 
+
+Another way to see it:
+$$
+\begin{aligned}
+& \hat{\tau}_{reg} = \frac{N_1}{N_1 + N_0}{\color{red} \hat{\tau}_1} + \frac{N_0}{N_1 + N_0}{\color{blue} \hat{\tau}_0} \\
+& {\color{red} \hat{\tau}_1} = \bar{Y}_1 - \bar{Y}_0 - (\bar{X}_1 - \bar{X}_0){\color{blue} \hat{\beta}_0} \\
+& {\color{blue} \hat{\tau}_0} = \bar{Y}_1 - \bar{Y}_0 - (\bar{X}_1 - \bar{X}_0){\color{red} \hat{\beta}_1}
+\end{aligned}
+$$
+\pause 
+Predict (unobserved) counterfactuals with the coefficients estimated on the other (observed) group. Extrapolation is needed if $\bar{X}_1 \neq \bar{X}_0$.
+
+# Extrapolation
+
+
+# Solutions
+- Achieve covariate balance by trimming extreme values is an option
+- But it turns out that regression is even messier than that under effect heterogeneity (cf. S\l oczińsky 2022)
+- We can use alternative estimators that don't suffer from the same problems
+
+# Conditioning on the propensity score
+- Let's first introduce the concept of **balancing score**: a function of the covariates that is a sufficient statistic for the covariates values in the treatment distribution
+  - A statistic $T(X)$ is sufficient for a parameter $\theta$ if $f(X|T(X), \theta) = f(X|T(X))$ (e.g. Mukhopadhyay 2000)
+  
+$$
+D_i \bot X_i | b(X_i)
+$$
+
+- This is a definition: there are several possible balancing scores that make the treatment orthogonal to covariates. The covariates themselves are a balancing score
+- What's appealing about the balancing score: if treatment is independent of the POs conditional on $X_i$, it is also independent conditional on $b(X_i)$ (proof in Imbens and Rubin, p.267)
+- We are interested in scores that reduce the dimensionality of the conditioning set $X_i$
+
+# Conditioning on the propensity score
+- Now define the **propensity score** 
+$$
+e(X_i) = P(D_i = 1|X_i) = E(D_i|X_i)
+$$
+- The propensity score is a balancing score (Imbens and Rubin, p.266)
+
+$$
+D_i \bot X_i | e(X_i)
+$$
+
+# Weighting 
+Weighting units by their propensity score is theoretically appealing, because it gives an unbiased estimate for the PATE under CIA. \pause
+\footnotesize
+$$
+\begin{aligned}
+& E \left[\frac{D_iY_i}{e(X_i)} - \frac{(1-D_i)Y_i}{1-e(X_i)}\right] = E \left[\frac{D_iY_{1i}}{e(X_i)} - \frac{(1-D_i)Y_{0i}}{1-e(X_i)}\right] = \\
+& = E\left[ E\left[\frac{D_iY_{1i}}{e(X_i)} - \frac{(1-D_i)Y_{0i}}{1-e(X_i)} \right] | X_i\right] = E\left[ \frac{E[D_i|X_i] E[Y_{1i}|X_i]}{e(X_i)} - \frac{E[1-D_i|X_i]E[Y_{0i}|X_i]}{1-e(X_i)} \right] = \\
+& = E\left[\frac{e(X_i)E[Y_{1i}|X_i]}{e(X_i)} - \frac{(1-e(X_i)) E[Y_{0i}|X_i]}{1-e(X_i)}\right] = \\
+& = E[E[Y_{1i} - Y_{0i}|X_i]] = E[Y_{1i} - Y_{0i}] = \tau_{PATE}
+\end{aligned}
+$$
+
+# Weighting
+A natural weighting estimator is the IPW estimator. 
+$$
+\hat{\tau} = \frac{1}{N} \sum_{i=1}^N\frac{D_iY_i}{\hat{e}(X_i)} - \frac{1}{N}\sum_{i=1}^N\frac{(1-D_i)Y_i}{1 - \hat{e}(X_i)}
+$$
+
+We usually use a "normalized" version of it.
+$$
+\hat{\tau}_{ipw} = \frac{\sum_{i=1}^N\frac{D_iY_i}{\hat{e}(X_i)}}{\sum_{i=1}^N\frac{D_i}{\hat{e}(X_i)}} - \frac{\sum_{i=1}^N\frac{(1-D_i)Y_i}{(1-\hat{e}(X_i))}}{\sum_{i=1}^N\frac{(1-D_i)}{(1-\hat{e}(X_i))}}
+$$
+
+In any case, relying on the PS shifts modeling issues from estimating $E[Y_i|X_i]$ to estimating $e(X_i)$. 
+
+# Matching
+- Non-parametric methods for causal effects under "selection on observables"
+- Approximates an experiment with block-randomization
+- Let's focus on the ATT as an estimand, because it requires weaker assumptions than CIA to be identified \pause
+- CMI: $E[Y_{0i}|D_i=1, X_i] = E[Y_{0i}|D_i=0, X_i], P(D_i=1)<1$
+  - Weaker overlap conditions as we just need to care about counterfactuals for treated units and not for control units
+  
+# Matching
+- The general intuition is a process like the following:
+1. For each treated unit, find control units with $\sim$ values of $X_i$ 
+2. Compute the difference in means within these strata and compute a weighted average using the distribution of $X$ of the treated group
+- In practice, this is done by targeting balance wrt the covariate distribution of the treated group
+  
+# Matching
+- Several matching algorithms available
+- Select close units by minimizing some function of the covariates 
+- Generally create a matched sample of units, on which one can estimate ATT/ATE
+- Researchers can try different matching algorithms until an acceptable level of balance is achieved
+- Useful diagnostics: Kolmogorov-Smirnov tests for equality of distributions, quantile-quantile plots
+
+
+# Matching to improve balance
+Let's see how to improve balance with matching using data from Ruggeri, Dorussen, and Gizelis (2016)
+\footnotesize
+```{r}
+# Import the data
+library(haven)
+data <- read_dta("matchingdata.dta")
+
+# Keep non-missing values
+data <- na.omit(data)
+
+# Treatment distribution
+library(janitor)
+tabyl(data$PKO)
+
+```
+
+
+
+# Matching to improve balance
+\tiny
+```{r}
+# Use MatchIt package
+library(MatchIt)
+
+# Nearest-neighbor matching on the propensity score
+nn_match <- matchit(PKO ~ avgttime + avgadjimr + popgpw2000_40 + avgmnt +  borddist + capdist + prec_new, method = "nearest", data = data)
+
+nn_match
+
+# Matched sample
+data_nn <- match.data(nn_match)
+
+# Matched data
+tabyl(data_nn$PKO)
+
+```
+
+# Matching to improve balance
+\tiny
+```{r}
+# Compare balance in raw and matched data
+summary(nn_match)$sum.all[,1:3]
+summary(nn_match)$sum.matched[,1:3]
+```
+
+# Matching to improve balance
+\tiny
+```{r fig.height=4, fig.align="center"}
+library(ggplot2)
+# Raw
+ggplot(data, aes(x=avgttime, y = ..density.., fill=PKO)) +
+  geom_histogram(bins=50) + facet_wrap(~PKO)+ theme_bw() +
+  theme(legend.position="none")
+```
+
+# Matching to improve balance
+\tiny
+```{r fig.height=4, fig.align="center"}
+# Matched
+ggplot(data_nn, aes(x=avgttime, y = ..density.., fill=PKO)) +
+  geom_histogram(bins=50) + facet_wrap(~PKO)+ theme_bw() +
+  theme(legend.position="none")
+
+# Larger set of diagnostic plots provided:
+# plot(nn_match)
+```
+
+# Matching algorithms
+- Exact matching
+- Genetic matching
+- Coarsened Exact Matching
+- Covariate Balancing Propensity Score
+
+# Combining weighting and regression
+Doubly-robust estimators combine estimation of the conditional assignment probability (PS) and conditional outcome (regression), and are consistent if any of the two is misspecified (not both). \pause
+
+There are many, a standard one is the Augmented Inverse Probability Weighting estimator: augments IPW with predicted outcomes from separate regressions on treated and control group.
+
+$$ 
+\begin{aligned}
+\hat{\tau}_{aipw} = \frac{1}{N} \sum_{i=1}^N\left(\frac{D_iY_i}{\hat{e}(X_i)} - \frac{\hat{Y}_i(D_i - \hat{e}(X_i))}{\hat{e}{(X_i)}}\right) - \\ \frac{1}{N}\sum_{i=1}^N\left(\frac{(1-D_i)Y_i}{1 - \hat{e}(X_i)} +\frac{\hat{Y}_i(D_i - \hat{e}(X_i))}{1-\hat{e}{(X_i)}} \right)
+\end{aligned}
+$$
+
+# Implentation
+There are several packages for matching and weighting methods
+
+In R:
+
+- `MatchIt`, `Matching`, `GenMatch`
+- `CBPS`
+- `PSweight`
+
+In Stata:
+
+- `teffects`
+- `cem`
+
+# Sensitivity
+- All these methods rely on some form of the CIA
+- As any assumption, "selection on observables" is untestable
+- We can however study how results could be affected by hypothetical departures from it, or how *sensitive* they are
+- There are several proposed strategies for sensitivity analysis, we will focus on the one by Cinelli and Hazlett (2020), implemented through `sensemakr` (there should now be a Stata version)
+
+# Sensitivity as an omitted variable problem
+Basic framework:
+
+- A linear model $Y = \tau D + X'\beta + \gamma Z + \epsilon_{full}$, where $D$ is the treatment, $X$ are observed controls and $Z$ are unobserved controls
+- The researcher can only estimate $Y = \tau_{res} D + X'\beta_{res} + \epsilon_{res}$
+- We know that $\hat{\tau}_{res} = {\color{blue} \hat{\tau}} + {\color{red} \hat{\gamma}\hat{\delta}} = {\color{blue} \hat{\tau} + {\color{red} Bias}}$, where $\hat{\delta}=\frac{Cov(\tilde{D}, \tilde{Z})}{V(\tilde{D})}$
+- In essence, what we do is to give values to the ${\color{red} Bias}$ and study how much the estimate of $\hat{\tau}_{res}$ change
+- Now, note that the Bias has two components:
+  - ${\color{red} \hat{\gamma}}$: the *impact* of $Z$ on the outcome
+  - ${\color{red} \hat{\delta}}$: the *imbalance* of $Z$ across treated/control groups
+
+# Using partial R-squared
+- It is convenient to rewrite OVB in terms of partial R-squared/correlations
+- Allows for non-linearities in the effects of confounders and in assessing the sensitivity of the standard errors
+- See the technical details [in the journal article](https://rss.onlinelibrary.wiley.com/doi/10.1111/rssb.12348) and examples in [the sensemakr website](http://carloscinelli.com/sensemakr/)
+
+# Cinelli and Hazlett (2020)
+\tiny
+```{r fig.height=3.5}
+library(sensemakr)
+data("darfur")
+
+# Run regression model
+model <- lm(peacefactor ~ directlyharmed + age + farmer_dar + herder_dar + pastvoted + hhsize_darfur + female + 
+              village, data = darfur)
+
+# Run sensitivity analysis 
+sensitivity <- sensemakr(model, treatment = "directlyharmed", benchmark_covariates = "female", kd = 1:3)
+
+# Results description
+# sensitivity
+
+# Plot
+plot(sensitivity)
+```
+
+# Cinelli and Hazlett (2020)
+\tiny
+```{r fig.height=3.5}
+# Plot
+plot(sensitivity, sensitivity.of = "t-value")
+```
