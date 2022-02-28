@@ -39,3 +39,4 @@ By appointment: [gl1759@nyu.edu](mailto:gl1759@nyu.edu)
 - Lab 1: Introduction, R Markdown, R basics
 - Lab 2: DAGs, Regression properties, Effective samples
 - Lab 3: Conditioning, matching, weighting, sensitivity
+- Lab 4: Inference, Instrumental Variables
