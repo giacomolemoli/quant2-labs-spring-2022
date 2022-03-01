@@ -320,12 +320,15 @@ cbind(means_full, means_z1_t, means_z2_t)
 
 # Characterize repression compliers
 ![](BGMMP_tab.png)
+
 # IV in R and Stata
 R:
+
 - `AER::ivreg` is the classic function
 - `lfe::felm` and `fixest::feols` have built-in options for IV
 
 Stata:
+
 - `ivregress` is the classic function
 - `ivreg2` user-written function with more estimators
 - `xtivreg` and `ivreghdfe` are versions thought for panel data
@@ -351,7 +354,7 @@ Consistent if either the specification for PS or CEF is correct. Intuition: we a
 # Double-robust estimator and IV
 Intuition: construct DR estimators for IV. \pause
 
-$$\hat{\tau}_{wald} = \frac{\hat{E}[Y_i|Z=1] - \hat{E}[_i|Z=0]}{\hat{E}[D_i|Z=1] - \hat{E}[D_i|Z=0]}$$
+$$\hat{\tau}_{wald} = \frac{\hat{E}[Y_i|Z=1] - \hat{E}[Y_i|Z=0]}{\hat{E}[D_i|Z=1] - \hat{E}[D_i|Z=0]}$$
 Both the numerator (ITT/RF) and the denominator (1S) are Differences-in-means which identify causal effects, with a common treatment $Z$. 
 
 One can build DR estimators for both and, if the estimated PS function for the instrument $Z$ is correctly specified, have consistency in both. Then, the ratio is consistent too (e.g. Slutsky theorem)
