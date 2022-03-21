@@ -261,7 +261,7 @@ Discussion in [Keele and Titiunik (2015)](https://www.cambridge.org/core/service
 
 GRDD have distinct challenges:
 
-- Possible compound treatments (e.g. multiple units sharing the same boundary)
+- Possible compound treatments 
 - Sparsity of units around the boundary can be more serious (since we want continuity in two dimensions)
 - Non-exogeneity of the boundary
 
