@@ -43,3 +43,4 @@ By appointment: [gl1759@nyu.edu](mailto:gl1759@nyu.edu)
 - Lab 5: Placebos, RDD (1)
 - Lab 6: RDD extensions
 - Lab 7: Difference-in-Differences
+- Lab 8: Mediators and Moderators
