@@ -1,0 +1,9 @@
+	(1)	(2)	(3)
+VARIABLES	q25	q50	q75
+			
+DMilitaryPresence	2.74378*	2.09668	1.70705
+	(1.589)	(1.519)	(2.040)
+			
+Observations	276	276	276
+Standard errors in parentheses			
+*** p<0.01, ** p<0.05, * p<0.1			
