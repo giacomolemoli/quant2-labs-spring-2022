@@ -202,7 +202,7 @@ ggplot(out, aes(x=i, y = coef)) + geom_point() + geom_line() +
 # Multiple endpoints
 Testing multiple hypotheses increases the possibility of \textcolor{red}{type I} or \textcolor{blue}{type II} error, i.e. false \textcolor{red}{Positives} or false \textcolor{blue}{Negatives}.
 
-But many times we do want to test multiple hypotheses (several behavioral outcomes in field experiments, votes for different paties in the same family/multiple elections etc)
+But many times we do want to test multiple hypotheses (several behavioral outcomes in field experiments, votes for different parties in the same family/multiple elections etc)
 
 Some popular strategies:
 
