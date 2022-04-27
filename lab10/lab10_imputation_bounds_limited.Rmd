@@ -212,9 +212,9 @@ Under these assumptions, Lee (2009) proves that we can identify bounds for the A
 
 $$
 \begin{aligned}
-\Delta_0^{LB} = E[Y|D=1, S=1, Y \leq y_{1-p0}] - E[Y|D=0, S=1] \\
-\Delta_0^{UB} = E[Y|D=1, S=1, Y \geq y_{p0}] - E[Y|D=0, S=1]\\
-p_0 = \frac{Pr[S=1|D=1] - Pr[S=1|D=0]}{Pr[S=1|D=1]}
+\Delta_0^{LB} = E[Y|D=1, R=1, Y \leq y_{1-p0}] - E[Y|D=0, R=1] \\
+\Delta_0^{UB} = E[Y|D=1, R=1, Y \geq y_{p0}] - E[Y|D=0, R=1]\\
+p_0 = \frac{Pr[R=1|D=1] - Pr[R=1|D=0]}{Pr[R=1|D=1]}
 \end{aligned}
 $$
 
